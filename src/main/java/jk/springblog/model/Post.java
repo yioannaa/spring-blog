@@ -1,5 +1,6 @@
 package jk.springblog.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jk.springblog.model.enums.CategoryEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,6 +8,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -32,4 +35,8 @@ public class Post {
         this.category = category;
         this.user = user;
     }
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "post")
+    List<Comment> comments = new ArrayList<>();
 }
