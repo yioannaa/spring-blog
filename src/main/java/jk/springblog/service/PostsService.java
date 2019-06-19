@@ -50,4 +50,15 @@ public class PostsService {
         post.setUser(userRepository.getOne(4L)); //póki co user ustawiony na sztywno
         postsRepository.save(post);
     }
+
+    public void deletePost(Long post_id){
+        postsRepository.deleteById(post_id);
+    }
+    public void updatePost(Long post_id, Post updatedPost){
+        Post post = postsRepository.getOne(post_id);
+        post.setTitle(updatedPost.getTitle());
+        post.setContent(updatedPost.getContent());
+        post.setCategory(updatedPost.getCategory());
+        postsRepository.save(post);
+    }
 }

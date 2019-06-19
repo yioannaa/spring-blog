@@ -8,10 +8,7 @@ import jk.springblog.service.PostsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,6 +64,28 @@ public class PostsController {
     @PostMapping("/addpost")
     public String addPost(@ModelAttribute Post post){
         postsService.savePost(post);
+        return "redirect:/";
+    }
+
+    @DeleteMapping("/delete/{post_id}")
+    public String deletePost(@PathVariable Long post_id){
+        postsService.deletePost(post_id);
+        return "redirect:/";
+    }
+    @GetMapping("/update/{post_id}")
+    public String updatePost(@PathVariable Long post_id, Model model){
+        Post post = postsService.getPostById(post_id);
+        model.addAttribute("post", post);
+        List<CategoryEnum> categories =
+                new ArrayList<>(Arrays.asList(CategoryEnum.values()));
+        System.out.println(categories);
+        model.addAttribute("categories", categories);
+        return "updatepost";
+    }
+
+    @PutMapping("/update/{post_id}")
+    public String updatePost(@PathVariable Long post_id, @ModelAttribute Post post){
+        postsService.updatePost(post_id, post);
         return "redirect:/";
     }
 
