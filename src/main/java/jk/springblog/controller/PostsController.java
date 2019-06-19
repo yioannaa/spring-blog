@@ -3,6 +3,7 @@ package jk.springblog.controller;
 
 import jk.springblog.model.Comment;
 import jk.springblog.model.Post;
+import jk.springblog.model.enums.CategoryEnum;
 import jk.springblog.service.PostsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -30,10 +33,10 @@ public class PostsController {
         return "posts";
     }
 
-    @GetMapping("/addpost")
-    public String addPost(){
-        return "addpost";
-    }
+//    @GetMapping("/addpost")
+//    public String addPost(){
+//        return "addpost";
+//    }
 
     @GetMapping("/post/{post_id}")
     public String getPost(@PathVariable Long post_id, Model model){
@@ -50,6 +53,21 @@ public class PostsController {
                              @PathVariable Long user_id){
         postsService.addComment(comment,post_id, user_id);
         return "redirect:/post/" + post_id;
+    }
+
+    @GetMapping("/addpost")
+    public String addPost(Model model){
+        model.addAttribute("post",new Post());
+        List<CategoryEnum> categories =
+                new ArrayList<>(Arrays.asList(CategoryEnum.values()));
+        System.out.println(categories);
+        model.addAttribute("categories", categories);
+        return "addpost";
+    }
+    @PostMapping("/addpost")
+    public String addPost(@ModelAttribute Post post){
+        postsService.savePost(post);
+        return "redirect:/";
     }
 
 }
