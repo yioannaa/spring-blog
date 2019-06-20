@@ -46,9 +46,9 @@ public class PostsService {
         commentRepository.save(comment);
     }
 
-    public void savePost(Post post){
-        post.setUser(userRepository.getOne(4L)); //póki co user ustawiony na sztywno
-        postsRepository.save(post);
+    public Post savePost(Post post, Long user_id){
+        post.setUser(userRepository.getOne(user_id)); //póki co user ustawiony na sztywno
+        return postsRepository.save(post);
     }
 
     public void deletePost(Long post_id){

@@ -3,6 +3,7 @@ package jk.springblog.controller;
 
 import jk.springblog.model.Comment;
 import jk.springblog.model.Post;
+import jk.springblog.model.User;
 import jk.springblog.model.enums.CategoryEnum;
 import jk.springblog.service.PostsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -22,18 +24,31 @@ public class PostsController {
     public PostsController(PostsService postsService) {
         this.postsService = postsService;
     }
-    @GetMapping("/")
-    public String home(Model model){
-        List<Post> posts = postsService.getAllPosts();
-        model.addAttribute("posts",posts);
 
+
+
+    private User getUserFromSession(HttpSession httpSession) {
+        User user = (User) httpSession.getAttribute("user");
+        if (user == null) {
+            user = new User();
+            user.setId(-1L);
+            user.setEmail("Unlogged");
+        }
+
+        return user;
+    }
+
+
+    @GetMapping("/")
+    public String home(Model model, HttpSession httpSession){
+        List<Post> posts = postsService.getAllPosts();
+        User user = getUserFromSession(httpSession);
+
+        model.addAttribute("user", user);
+        model.addAttribute("posts", posts);
         return "posts";
     }
 
-//    @GetMapping("/addpost")
-//    public String addPost(){
-//        return "addpost";
-//    }
 
     @GetMapping("/post/{post_id}")
     public String getPost(@PathVariable Long post_id, Model model){
@@ -53,7 +68,8 @@ public class PostsController {
     }
 
     @GetMapping("/addpost")
-    public String addPost(Model model){
+    public String addPost(Model model, HttpSession httpSession){
+        model.addAttribute("user", getUserFromSession(httpSession));
         model.addAttribute("post",new Post());
         List<CategoryEnum> categories =
                 new ArrayList<>(Arrays.asList(CategoryEnum.values()));
@@ -61,10 +77,10 @@ public class PostsController {
         model.addAttribute("categories", categories);
         return "addpost";
     }
-    @PostMapping("/addpost")
-    public String addPost(@ModelAttribute Post post){
-        postsService.savePost(post);
-        return "redirect:/";
+    @PostMapping("/addpost/{user_id}")
+    public String addPost(@ModelAttribute Post post, Model model, @PathVariable Long user_id){
+        Post tmp = postsService.savePost(post, user_id);
+        return "redirect:/post/" + tmp.getId();
     }
 
     @DeleteMapping("/delete/{post_id}")
