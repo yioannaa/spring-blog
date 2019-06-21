@@ -47,18 +47,34 @@ public class PostsService {
     }
 
     public Post savePost(Post post, Long user_id){
-        post.setUser(userRepository.getOne(user_id)); //póki co user ustawiony na sztywno
+        post.setUser(userRepository.getOne(user_id));
         return postsRepository.save(post);
     }
 
-    public void deletePost(Long post_id){
-        postsRepository.deleteById(post_id);
+//    public void deletePost(Long post_id){
+//        postsRepository.deleteById(post_id);
+//    }
+
+    public void deleteById(Long post_id, Long user_id) {
+
+        if (userRepository.existsById(user_id)) {
+            User user = userRepository.findFirstById(user_id);
+            if (user == postsRepository.findFirstById(post_id).getUser()
+                    || user.getRoles().stream().anyMatch(role -> role.getRole_name().equals("ADMIN"))) {
+                postsRepository.deleteById(post_id);
+            }
+        }
     }
+
     public void updatePost(Long post_id, Post updatedPost){
         Post post = postsRepository.getOne(post_id);
         post.setTitle(updatedPost.getTitle());
         post.setContent(updatedPost.getContent());
         post.setCategory(updatedPost.getCategory());
         postsRepository.save(post);
+    }
+
+    public boolean isOwner(Long post_id, Long user_id) {
+        return postsRepository.findFirstById(post_id).getUser().getId().equals(user_id);
     }
 }

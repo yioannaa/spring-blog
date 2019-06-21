@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PostsRepository extends JpaRepository<Post, Long> {
+
+    Post findFirstById (Long post_id);
 }

@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class PostsController {
@@ -51,7 +52,8 @@ public class PostsController {
 
 
     @GetMapping("/post/{post_id}")
-    public String getPost(@PathVariable Long post_id, Model model){
+    public String getPost(@PathVariable Long post_id, Model model, HttpSession httpSession){
+        model.addAttribute("user", getUserFromSession(httpSession));
         Post post = postsService.getPostById(post_id);
         model.addAttribute("post",post);
         model.addAttribute("comment",new Comment());
@@ -84,19 +86,29 @@ public class PostsController {
     }
 
     @DeleteMapping("/delete/{post_id}")
-    public String deletePost(@PathVariable Long post_id){
-        postsService.deletePost(post_id);
+    public String deletePost(@PathVariable Long post_id, HttpSession httpSession, Model model){
+        Optional<User> user = Optional.of(getUserFromSession(httpSession));
+        model.addAttribute("user", user.get());
+        if (user.get().getId() != null) {
+            postsService.deleteById(post_id, user.get().getId());
+        }
         return "redirect:/";
     }
     @GetMapping("/update/{post_id}")
-    public String updatePost(@PathVariable Long post_id, Model model){
-        Post post = postsService.getPostById(post_id);
-        model.addAttribute("post", post);
-        List<CategoryEnum> categories =
-                new ArrayList<>(Arrays.asList(CategoryEnum.values()));
-        System.out.println(categories);
-        model.addAttribute("categories", categories);
-        return "updatepost";
+    public String updatePost(@PathVariable Long post_id, Model model, HttpSession httpSession){
+        Optional<User> user = Optional.of(getUserFromSession(httpSession));
+        model.addAttribute("user", getUserFromSession(httpSession));
+
+        if (user.get().getId() != null) {
+            if (postsService.isOwner(post_id, user.get().getId())) {
+                List<CategoryEnum> categories = new ArrayList<>(Arrays.asList(CategoryEnum.values()));
+                model.addAttribute("categories", categories);
+                Post post = postsService.getPostById(post_id);
+                model.addAttribute("post", post);
+                return "updatepost";
+            }
+        }
+        return "redirect:/";
     }
 
     @PutMapping("/update/{post_id}")
