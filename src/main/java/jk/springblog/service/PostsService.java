@@ -60,7 +60,7 @@ public class PostsService {
         if (userRepository.existsById(user_id)) {
             User user = userRepository.findFirstById(user_id);
             if (user == postsRepository.findFirstById(post_id).getUser()
-                    || user.getRoles().stream().anyMatch(role -> role.getRole_name().equals("ADMIN"))) {
+                    || user.getRoles().stream().anyMatch(role -> role.getRole().equals("ADMIN"))) {
                 postsRepository.deleteById(post_id);
             }
         }
