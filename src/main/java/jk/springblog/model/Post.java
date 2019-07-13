@@ -29,6 +29,10 @@ public class Post {
     @JoinColumn(name = "user_id")
     private User user;
 
+    private int like_number;
+    private int not_like_number;
+
+
     public Post(String title, String content, CategoryEnum category, User user) {
         this.title = title;
         this.content = content;
@@ -37,6 +41,6 @@ public class Post {
     }
 
     @JsonIgnore
-    @OneToMany(mappedBy = "post")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "post")
     List<Comment> comments = new ArrayList<>();
 }

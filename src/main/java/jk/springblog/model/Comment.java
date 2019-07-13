@@ -20,7 +20,8 @@ public class Comment {
     @ManyToOne()
     @JoinColumn(name = "user_id")
     private User user;
-    @ManyToOne()
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
 
