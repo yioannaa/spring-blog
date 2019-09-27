@@ -45,7 +45,9 @@ public class ContactController {
             return "contact";
         }
 
+        //zapis do db
         contactService.addContact(contact);
+
         autoMailingService.sendMessage(
                 contact.getEmail(),
                 "Potwierdzenie wysłania wiadomości",

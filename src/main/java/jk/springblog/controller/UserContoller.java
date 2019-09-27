@@ -42,7 +42,7 @@ public class UserContoller {
             return "redirect:/";
         }
         model.addAttribute(
-                "passwordMessage", "Passwords not matched!");
+                "passwordMessage", "Passwords do not match!");
         return "adduser";
     }
     @GetMapping("/login")

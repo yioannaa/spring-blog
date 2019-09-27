@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -37,6 +38,8 @@ public class PostsController {
         {
             categories.add(post.getCategory());
         }
+        //przekazanie obiektu do widoku
+        //model.addAttribute(nazwa w html, obiekt przekazywany)
         model.addAttribute("categories", categories);
             model.addAttribute("posts", posts);
 
@@ -45,10 +48,6 @@ public class PostsController {
     }
 
 
-//    @GetMapping("/addpost")
-//    public String addPost(){
-//        return "addpost";
-//    }
 
     @GetMapping("/filter_category{category}")
     public String filterCategories(@PathVariable CategoryEnum category, Model model){
@@ -79,18 +78,26 @@ public class PostsController {
     @PostMapping("/addcomment/{post_id}/{user_id}")
     public String addComment(@ModelAttribute Comment comment,
                              @PathVariable Long post_id,
+                             @PathVariable Long user_id,
                              Authentication auth) {
         postsService.addComment(comment, post_id, auth);
+        //przekierowanie na adres url nie na nazwę widoku
         return "redirect:/post/" + post_id;
     }
 
     @GetMapping("/addpost")
-    public String addPost(Model model, Authentication authentication) {
-        UserDetails principal = (UserDetails) authentication.getPrincipal();
+    public String addPost(Model model, Authentication auth){
+
+        if (auth != null){
+            UserDetails userDetails = (UserDetails) auth.getPrincipal();
+            //przekierowuję do widoku zalogowanego użytkownika
+            model.addAttribute("loggedEmail", userDetails.getUsername());
+            model.addAttribute("isAdmin", postsService.isAdmin(userDetails));
+        }
+
         model.addAttribute("post", new Post());
         List<CategoryEnum> categories =
                 new ArrayList<>(Arrays.asList(CategoryEnum.values()));
-        System.out.println(categories);
         model.addAttribute("categories", categories);
         return "addpost";
     }
@@ -111,10 +118,12 @@ public class PostsController {
     @GetMapping("/update/{post_id}")
     public String updatePost(@PathVariable Long post_id, Model model) {
         Post post = postsService.getPostById(post_id);
+        //przekazanie istniejącego posta do formularza modyfikacji
         model.addAttribute("post", post);
         List<CategoryEnum> categories =
                 new ArrayList<>(Arrays.asList(CategoryEnum.values()));
         System.out.println(categories);
+        //przekazanie listy kategorii do znacznika select
         model.addAttribute("categories", categories);
         return "updatepost";
     }

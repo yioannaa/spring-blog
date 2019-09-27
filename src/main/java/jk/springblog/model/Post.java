@@ -24,6 +24,7 @@ public class Post {
     @Type(type = "text")
     private String content;
     @Enumerated
+    //@Transient -ignoruje mapowanie orm dla tego pola
     private CategoryEnum category;
     @ManyToOne()
     @JoinColumn(name = "user_id")
@@ -41,6 +42,6 @@ public class Post {
     }
 
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "post")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "post")
     List<Comment> comments = new ArrayList<>();
 }

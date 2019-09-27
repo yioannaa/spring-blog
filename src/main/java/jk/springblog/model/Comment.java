@@ -1,6 +1,6 @@
 package jk.springblog.model;
 
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,6 +20,8 @@ public class Comment {
     @ManyToOne()
     @JoinColumn(name = "user_id")
     private User user;
+
+    @JsonIgnore
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE},
             fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")

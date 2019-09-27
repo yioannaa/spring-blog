@@ -1,6 +1,7 @@
 package jk.springblog.configuration;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
 
+@EnableOAuth2Sso
 @Component
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {

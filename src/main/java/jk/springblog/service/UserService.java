@@ -36,6 +36,7 @@ public class UserService {
 
     public void registerUser(User user){
         user.addRole(roleRepository.getOne(1L));
+        //szyfrowanie hasła
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }

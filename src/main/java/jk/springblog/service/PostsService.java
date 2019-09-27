@@ -66,6 +66,7 @@ public class PostsService {
     public void deletePost(Long post_id){
         postsRepository.deleteById(post_id);
     }
+
     public void updatePost(Long post_id, Post updatedPost){
         Post post = postsRepository.getOne(post_id);
         post.setTitle(updatedPost.getTitle());

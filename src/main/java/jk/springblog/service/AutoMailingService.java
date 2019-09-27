@@ -1,5 +1,6 @@
 package jk.springblog.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AutoMailingService {
 
+    @Autowired
     JavaMailSender javaMailSender;
 
     public void sendMessage(String to, String subject, String text){
@@ -15,6 +17,7 @@ public class AutoMailingService {
         simpleMailMessage.setSubject(subject);
         simpleMailMessage.setText(text);
 
+        //wysłanie wiadomości z maila skonfugurowanego w application properties
         javaMailSender.send(simpleMailMessage);
     }
 }
